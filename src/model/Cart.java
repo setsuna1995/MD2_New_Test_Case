@@ -1,14 +1,22 @@
 package model;
 
-public class Cart {
+import java.io.Serializable;
+
+public class Cart implements Serializable {
+    private static long serialUID = -1793359086321202973L;
     private int cartID;
     private Product product;
     private int numberOfProduct;
-
+private double money;
     public Cart() {
     }
 
-    public Cart(int productID, Product product ,int numberOfProduct) {
+    public Cart(Product product, int numberOfProduct) {
+        this.product = product;
+        this.numberOfProduct = numberOfProduct;
+    }
+
+    public Cart (int productID, Product product , int numberOfProduct) {
         this.cartID = productID;
         this.product = product;
         this.numberOfProduct = numberOfProduct;
@@ -34,21 +42,27 @@ public class Cart {
         this.product = product;
     }
 
-    public void setCartID(int cartID) {
-        this.cartID = cartID;
-    }
+
 
     public Product getProduct() {
         return product;
     }
 
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
     @Override
     public String toString() {
         return "Cart{" +
-                "cartID =" + cartID +
-                ", product name =" + product.getProductName() +
-                ", numberOfProduct =" + numberOfProduct +
-                ", total price = " + product.getProductPrice()*numberOfProduct +
+                "cartID=" + cartID +
+                ", product=" + product.getProductName() +
+                ", numberOfProduct=" + numberOfProduct +
+                ", money=" + money +
                 '}';
     }
 }

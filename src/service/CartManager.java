@@ -1,40 +1,60 @@
 package service;
 
+import Tools.ExceptionManager;
 import model.Cart;
 import model.Product;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 
 public class CartManager {
-    private final ArrayList<Cart> cartArrayList;
-    private final ProductManager productManager;
-    private final Scanner scanner;
-    private final Product product;
-    private final Cart cart;
+    private final List<Cart> cartArrayList;
+    private ProductManager productManager;
+    private Cart cart;
+    private Scanner scanner;
+    private List<Cart> bills;
 
-    public CartManager() {
+    public CartManager(ProductManager productManager) {
         cartArrayList = new ArrayList<>();
-        scanner = new Scanner(System.in);
-        product = new Product();
-        cart = new Cart();
-        productManager = new ProductManager();
+        this.productManager = productManager;
     }
 
 
-    public void addProductToCart(ProductManager productManager) {
-        System.out.println("Select the type of goods you need by ID:");
-        productManager.Display();
-        int productID = Integer.parseInt(scanner.nextLine());
-        Product product = productManager.findById(productID);
-        int idCart = cartArrayList.size() + 1;
-        System.out.println("Fill in the number of items to be purchased: ");
-        int amount = Integer.parseInt(scanner.nextLine());
-        Cart cart = new Cart(idCart, product, amount);
-        cartArrayList.add(cart);
-
+    public void addProductToCart() {
+                System.out.println("Select the type of goods you need by ID:");
+                productManager.display();
+                int productID = ExceptionManager.exceptionPositiveInteger();
+                Product product = productManager.findById(productID);
+                if (product != null) {
+                    int idCart = cartArrayList.size() + 1;
+                    System.out.println("Fill in the number of items to be purchased: ");
+                    int amount = ExceptionManager.exceptionQuantity();
+                    checkCartBuy(idCart,product, amount);
+                }
+            }
+public void checkCartBuy (int id,Product product, int quantity) {
+    if (cart == null) {
+        cart = new Cart(product, quantity);
+    } else {
+        boolean check = false;
+        for (Cart c : cartArrayList) {
+            if (cart.getProduct().getIdProduct() == product.getIdProduct()) {
+                check = true;
+                cart.setNumberOfProduct(cart.getNumberOfProduct() + quantity);
+            }
+        }
+        if (!check) {
+            cart = new Cart(product, quantity);
+        }
+        for (Cart c: cartArrayList) {
+            cart.setMoney(cart.getProduct().getProductPrice() * cart.getNumberOfProduct());
+        }
     }
+
+}
 
     public Cart findCartById(int id) {
         for (Cart cart : cartArrayList) {
@@ -45,23 +65,32 @@ public class CartManager {
         return null;
     }
 
-    public void editCart(ProductManager productManager) {
+    public void editCart() {
+        boolean input = true;
+        do {
+            try {
         displayCart();
-        System.out.println("Enter ID: ");
-        int id = Integer.parseInt(scanner.nextLine());
+        int id = ExceptionManager.exceptionPositiveInteger();
         Cart cart = findCartById(id);
         if (cart == null) {
             System.out.println("Not found!");
         } else {
-            productManager.Display();
-            int productID = Integer.parseInt(scanner.nextLine());
+            productManager.display();
+            int productID = ExceptionManager.exceptionPositiveInteger();
             Product product = productManager.findById(productID);
             System.out.println("Fill in the number of items to be purchased: ");
-            int amount = Integer.parseInt(scanner.nextLine());
+            int amount = ExceptionManager.exceptionQuantity();
             cart.setProduct(product);
             cart.setNumberOfProduct(amount);
             System.out.println("Edit successfully!");
         }
+    }catch (NumberFormatException e) {
+                input = false;
+                System.out.println("You entered the wrong data type");
+                System.out.println("ID and quantity sections to fill in integers");
+            }
+        }
+        while (!input);
     }
 
     public void displayCart() {
@@ -70,10 +99,10 @@ public class CartManager {
         }
     }
 
-    public void deleteItemsInCart(ProductManager productManager) {
+    public void deleteItemsInCart() {
         displayCart();
         System.out.println("Enter card ID: ");
-        int id = Integer.parseInt(scanner.nextLine());
+        int id = ExceptionManager.exceptionPositiveInteger();
         Cart cart = findCartById(id);
         if (cart == null) {
             System.out.println("Not found!");
@@ -83,24 +112,20 @@ public class CartManager {
         }
     }
 
-    public void cartCheckout(ProductManager productManager) {
+    public void cartCheckout() {
         displayCart();
-        productManager.loadProduct();
         System.out.println("Do you want to check out the cart");
         System.out.println("If you agree fill in Y, otherwise enter N");
         for (Cart c: cartArrayList
              ) {
-            System.out.println(c);
-            productManager.loadProduct();
             for (Product s : productManager.getProductArrayList()) {
-                if (c.getProduct().getIdProduct() == s.getIdProduct()) {
+                if (Objects.equals(c.getProduct().getProductName(), s.getProductName())) {
                     int max = s.getNumberOfProductAvailable() - c.getNumberOfProduct();
                     s.setNumberOfProductAvailable(max);
-                    System.out.println(s);
                 }
             }
-        }
 
+        }
 
 
     }

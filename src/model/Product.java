@@ -1,19 +1,22 @@
 package model;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
+    private static final long serialUID = -1793359086321202973L;
     private int idProduct;
     private String productName;
-    private Categories categories;
+    private Category category;
     private double productPrice;
 
-private int numberOfProductAvailable;
+    private int numberOfProductAvailable;
 
     public Product() {
     }
 
-    public Product(Categories categories, int idProduct, String productName, double productPrice, int numberOfProductAvailable) {
+    public Product(Category category, int idProduct, String productName, double productPrice, int numberOfProductAvailable) {
 
-        this.categories = categories;
+        this.category = category;
         this.idProduct = idProduct;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -38,7 +41,6 @@ private int numberOfProductAvailable;
     }
 
 
-
     public double getProductPrice() {
         return productPrice;
     }
@@ -47,30 +49,24 @@ private int numberOfProductAvailable;
         this.productPrice = productPrice;
     }
 
-    public Categories getCategories() {
-        return categories;
+    public Category getCategories() {
+        return category;
     }
 
-    public void setCategories(Categories categories) {
-        this.categories = categories;
-    }
 
     public int getIdProduct() {
         return idProduct;
     }
 
-    public void setIdProduct(int idProduct) {
-        this.idProduct = idProduct;
-    }
 
     @Override
     public String toString() {
         return "Product{" +
                 "idProduct = " + idProduct +
                 ", productName = '" + productName + '\'' +
-                ", category = " + categories.getCategoriesName() +
+                ", category = " + category.getCategoriesName() +
                 ", productPrice=" + productPrice +
                 ", numberOfProductAvailable = " + numberOfProductAvailable +
-                '}';
+                '}' + '\n';
     }
 }

@@ -1,54 +1,50 @@
 package service;
 
 
-
-import model.Categories;
+import model.Category;
 import model.Product;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ReadAndWriteFile {
-    public static ArrayList<String[]> importData(String link) {
-        ArrayList<String[]> result = new ArrayList<>();
-        File file = new File(link);
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                result.add(line.split(","));
-            }
+public class ReadAndWriteFile implements Serializable {
+    private static final long serialVersionUID = -4024148923274413365L;
+    public void writeProductFile(Product product) {
+        File file = new File("product");
+        try (ObjectOutputStream obj = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
+            obj.writeObject(product);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace(System.err);
         }
-        return result;
     }
-
-    public static void writeProductFile(String filePath, ArrayList<Product> productArrayList) throws IOException {
-        FileWriter writer = new FileWriter(filePath);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer);
-        for (Product item : productArrayList
-        ) {
-            bufferedWriter.write(
-                    item.getCategories().getId() + "," +
-                            item.getIdProduct() + "," +
-                            item.getProductName() + "," +
-                            item.getProductPrice() + "," +
-                            item.getNumberOfProductAvailable());
-            bufferedWriter.newLine();
+    public void writeCategoryFile(CategoryManager categoryManager) {
+        File file = new File("category");
+        try (ObjectOutputStream obj = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
+            obj.writeObject(categoryManager.getCategoryArrayList());
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
         }
-        bufferedWriter.close();
     }
-    public static void writeCategoryFile(String filePath, ArrayList<Categories> categoriesArrayList) throws IOException {
-        FileWriter writer = new FileWriter(filePath);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer);
-        for (Categories item : categoriesArrayList
-        ) {
-            bufferedWriter.write(
-                    item.getId() + "," +
-                            item.getCategoriesName());
-            bufferedWriter.newLine();
+    public void readCategoryData (CategoryManager categoryManager){
+        List<Category> categoriesFile = new ArrayList<>();
+        File file = new File("C:\\Users\\vanan\\IdeaProjects\\NewTestCase\\category");
+        try (ObjectInputStream obj = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
+            categoriesFile = (List<Category>) obj.readObject();
+        } catch (IOException | ClassCastException | ClassNotFoundException e) {
+            e.printStackTrace(System.err);
         }
-        bufferedWriter.close();
+        categoryManager.setCategoryArrayList(categoriesFile);
     }
+//    public void readProductData (ProductManager productManager){
+//        List<Product> productFile = new ArrayList<>();
+//        File file = new File("C:\\Users\\vanan\\IdeaProjects\\NewTestCase\\product");
+//        try (ObjectInputStream obj = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
+//            productFile = (List<Product>) obj.readObject();
+//        } catch (IOException | ClassCastException | ClassNotFoundException e) {
+//            e.printStackTrace(System.err);
+//        }
+//        productManager.setProductArrayList(productFile);
+//    }
 }

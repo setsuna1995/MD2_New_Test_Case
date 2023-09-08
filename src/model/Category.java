@@ -1,10 +1,16 @@
 package model;
 
-public class Categories {
-    private final int id;
+import java.io.Serializable;
+
+public class Category implements Serializable {
+    private static long serialUID = -1793359086321202973L;
+    private int id;
     private String categoriesName;
 
-    public Categories(int id, String categoriesName) {
+    public Category() {
+    }
+
+    public Category(int id, String categoriesName) {
         this.id = id;
         this.categoriesName = categoriesName;
     }
@@ -24,7 +30,7 @@ public class Categories {
 
     @Override
     public String toString() {
-        return "Categories{" +
+        return "Category{" +
                 "id=" + id +
                 ", categoriesName='" + categoriesName + '\'' +
                 '}';

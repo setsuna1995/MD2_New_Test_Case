@@ -1,27 +1,29 @@
 package controller;
 
 
-import model.Cart;
 import model.Product;
 import service.CartManager;
-import service.CategoriesManager;
+import service.CategoryManager;
 import service.ProductManager;
+import service.ReadAndWriteFile;
 
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Menu {
+public class Menu implements Serializable {
+    private static long serialUID = -1793359086321202973L;
     public void menu() {
         Scanner scanner = new Scanner(System.in);
-        Product product = new Product();
-        CategoriesManager categoriesManager = new CategoriesManager();
-        ProductManager productManager = new ProductManager();
-        CartManager cartManager = new CartManager();
-        categoriesManager.loadCategories();
-      productManager.loadProduct();
+        CategoryManager categoryManager = new CategoryManager();
+        ProductManager productManager = new ProductManager(categoryManager);
+        CartManager cartManager = new CartManager(productManager);
+        ReadAndWriteFile readAndWriteFile = new ReadAndWriteFile();
+        readAndWriteFile.readCategoryData(categoryManager);
+        readAndWriteFile.readProductData(productManager);
         do {
             System.out.println("MENU:");
-            System.out.println("1. Menu Categories");
+            System.out.println("1. Menu Category");
             System.out.println("2. Menu Product");
             System.out.println("3. Menu Buy");
             System.out.println("0. Exit");
@@ -29,13 +31,13 @@ public class Menu {
             int choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
                 case 1:
-                    menuCategory(categoriesManager, scanner);
+                    menuCategory(categoryManager,readAndWriteFile ,scanner);
                     break;
                 case 2:
-                    menuProduct(productManager, categoriesManager ,scanner);
+                    menuProduct(productManager, new Product(),readAndWriteFile,scanner);
                     break;
                 case 3:
-                    menuCart(cartManager, productManager,product, scanner);
+                    menuCart(cartManager, scanner);
                     break;
                 case 0:
                     System.exit(0);
@@ -47,10 +49,10 @@ public class Menu {
 
     }
 
-    private void menuCategory(CategoriesManager categoriesManager, Scanner scanner) {
+    private void menuCategory(CategoryManager categoryManager,ReadAndWriteFile readAndWriteFile ,Scanner scanner) {
         int choice;
         do {
-            System.out.println("Menu Categories:");
+            System.out.println("Menu Category:");
             System.out.println("1. Create categories");
             System.out.println("2. Edit categories");
             System.out.println("3. Display categories");
@@ -59,21 +61,23 @@ public class Menu {
             choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
                 case 1:
-                    categoriesManager.Add();
+                    categoryManager.addData();
+                    readAndWriteFile.writeCategoryFile(categoryManager);
                     break;
                 case 2:
-                    categoriesManager.Edit();
+                    categoryManager.edit();
+                    readAndWriteFile.writeCategoryFile(categoryManager);
                     break;
                 case 3:
-                    categoriesManager.Display();
+                    categoryManager.display();
                     break;
             }
 
         } while (choice != 0);
     }
 
-    private void menuProduct(ProductManager productManager,
-                             CategoriesManager categoriesManager, Scanner scanner
+    private void menuProduct(ProductManager productManager, Product product, ReadAndWriteFile readAndWriteFile
+                             ,Scanner scanner
     ) {
         int choice;
         do {
@@ -92,13 +96,14 @@ public class Menu {
             choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
                 case 1:
-                    productManager.Add();
+                    productManager.addData();
+                    readAndWriteFile.writeProductFile(product);
                     break;
                 case 2:
                     productManager.deleteProduct();
                     break;
                 case 3:
-                    productManager.Edit();
+                    productManager.edit();
                     break;
                 case 4:
                     productManager.findProduct();
@@ -110,23 +115,23 @@ public class Menu {
                     productManager.sortByDescendingPrice();
                     break;
                 case 7:
-                    productManager.findPriceRange(new Product());
+                    productManager.findPriceRange();
                     break;
                 case 8:
                     productManager.displayProductCategory();
                     break;
                 case 9:
-                    productManager.Display();
+                    productManager.display();
                     break;
             }
 
         } while (choice != 0);
     }
 
-    private void menuCart(CartManager cartManager,  ProductManager productManager,Product product ,Scanner scanner) {
+    private void menuCart(CartManager cartManager, Scanner scanner) {
         int choice;
         do {
-            System.out.println("Menu Categories:");
+            System.out.println("Menu Category:");
             System.out.println("1. Add product to cart");
             System.out.println("2. Change the quantity of goods in the cart");
             System.out.println("3. Remove products from cart");
@@ -137,19 +142,19 @@ public class Menu {
             choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
                 case 1:
-                   cartManager.addProductToCart(productManager);
+                    cartManager.addProductToCart();
                     break;
                 case 2:
-                    cartManager.editCart(productManager);
+                    cartManager.editCart();
                     break;
                 case 3:
-                    cartManager.deleteItemsInCart(productManager);
+                    cartManager.deleteItemsInCart();
                     break;
                 case 4:
                     cartManager.displayCart();
                     break;
                 case 5:
-                    cartManager.cartCheckout(productManager);
+                    cartManager.cartCheckout();
                     break;
             }
 
