@@ -19,13 +19,15 @@ public class CartManager {
     private final UserManage userManage;
     private final Scanner scanner;
     private Cart cart;
+    private CartDetail cartDetail;
     private List<Cart> bills;
 
 
-    public CartManager(ProductManager productManager, UserManage userManage) {
+    public CartManager(ProductManager productManager, UserManage userManage, CartDetail cartDetail, User user) {
         this.userManage = userManage;
         scanner = new Scanner(System.in);
         this.productManager = productManager;
+        this.cartDetail = cartDetail;
         bills = new ArrayList<>();
     }
 
@@ -38,9 +40,7 @@ public class CartManager {
         System.out.println("Enter id you want to buy: ");
         int id = Integer.parseInt(scanner.nextLine());
         Product product = productManager.findById(id);
-        User user1 = userManage.findById();
         boolean check = false;
-
         if (product != null) {
             System.out.println("Enter quantity you want to buy: ");
             int quantity = Integer.parseInt(scanner.nextLine());
@@ -49,14 +49,14 @@ public class CartManager {
                 System.out.println("Insufficient number of stores");
             }
             else {
-                checkCartIsEmpty(product, quantity, user1);
-                checkProductExit(product, quantity, check, user1);
+                checkCartIsEmpty(product, quantity, cartDetail.getUser());
+                checkProductExit(product, quantity, check, cartDetail.getUser());
             }
 
         }
     }
 
-    public void checkCartIsEmpty(Product product, int quantity, User user) {
+    public void checkCartIsEmpty(Product product, int quantity, String user) {
         if (cart == null) {
             cart = new Cart();
             CartDetail cartDetail = new CartDetail(product, quantity, user);
@@ -65,7 +65,7 @@ public class CartManager {
         }
     }
 
-    public void checkProductExit(Product product, int quantity, boolean check, User user) {
+    public void checkProductExit(Product product, int quantity, boolean check, String user) {
         for (CartDetail cartDetail : cart.getCartDetails()) {
             if (cartDetail.getProduct().getIdProduct() == product.getIdProduct()) {
                 check = true;
@@ -132,7 +132,6 @@ public class CartManager {
             System.out.println("Delete successfully!");
         }
     }
-
     public void payment() {
         if (cart != null) {
             cart.setStatus(true);
@@ -155,15 +154,20 @@ public class CartManager {
 
     public void displayBill() {
         read();
-        for (Cart c : bills) {
-            System.out.println(c.getId());
-            for (CartDetail cartDetail : c.getCartDetails()) {
-                System.out.println(cartDetail);
+            for (User u : userManage.getUserArrayList()
+            ) {
+                if (u.getUserName().equals(cartDetail.getUser())) {
+                    for (Cart c: bills
+                         ) {
+                        System.out.println(c.getCartDetails());
+                    }
+
+                    System.out.println("Tổng tiền: " );
+                    System.out.println("---------------------------------------");
+                }
             }
-            System.out.println("Tổng tiền: " + c.getTotal());
-            System.out.println("---------------------------------------");
         }
-    }
+
 
     private void read() {
         List<Cart> billsFile = new ArrayList<>();

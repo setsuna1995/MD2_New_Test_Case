@@ -10,16 +10,24 @@ public class CartDetail implements Serializable {
 private int INDEX;
     private int id;
     private Product product;
-    private User user;
+    private String user;
     private int quantity;
 
     public CartDetail() {
     }
 
-    public CartDetail(Product product, int quantity, User user) {
+    public CartDetail(Product product, int quantity, String user) {
         this.id = ++INDEX;
         this.product = product;
         this.quantity = quantity;
+        this.user = user;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
         this.user = user;
     }
 

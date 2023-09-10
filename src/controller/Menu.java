@@ -7,7 +7,7 @@ import controller.userMenu.MenuAdmin;
 import controller.userMenu.MenuCustomer;
 import model.function.Cart;
 import model.function.CartDetail;
-import model.function.Product;
+import model.user.User;
 import service.functionManage.CartManager;
 import service.functionManage.CategoryManager;
 import service.functionManage.IOManager;
@@ -26,15 +26,14 @@ public class Menu {
     public Menu() {
         categoryManager = new CategoryManager();
         ioManager = new IOManager();
-        UserManage userManage = new UserManage();
-        Product product = new Product();
+        CartDetail cartDetail = new CartDetail();
+        UserManage userManage = new UserManage(cartDetail);
         MenuCategory menuCategory = new MenuCategory();
         MenuProduct menuProduct = new MenuProduct();
         Cart cart = new Cart();
-        CartDetail cartDetail = new CartDetail();
         productManager = new ProductManager(categoryManager);
-        CartManager cartManager = new CartManager(productManager, userManage);
-        menuCustomer = new MenuCustomer(userManage, cartManager, cart, product, cartDetail);
+        CartManager cartManager = new CartManager(productManager, userManage, cartDetail, new User());
+        menuCustomer = new MenuCustomer(userManage, cartManager, cart);
         menuAdmin = new MenuAdmin(productManager, menuCategory, menuProduct, categoryManager);
         categoryManager.loadCategories(ioManager.importData("category.txt"));
         productManager.loadProduct(ioManager.importData("product.txt"));

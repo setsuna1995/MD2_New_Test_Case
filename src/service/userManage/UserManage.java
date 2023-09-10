@@ -2,6 +2,7 @@ package service.userManage;
 
 
 
+import model.function.CartDetail;
 import model.user.User;
 
 import java.io.*;
@@ -12,18 +13,38 @@ import java.util.Scanner;
 
 public class UserManage implements Serializable {
     private final Scanner scanner;
-int id;
     private List<User> userArrayList;
+private List<String> logInList;
+private CartDetail cartDetail;
 
-    public UserManage() {
+    public List<User> getUserArrayList() {
+        return userArrayList;
+    }
+
+    public void setUserArrayList(List<User> userArrayList) {
+        this.userArrayList = userArrayList;
+    }
+
+    public List<String> getLogInList() {
+        return logInList;
+    }
+
+    public void setLogInList(List<String> logInList) {
+        this.logInList = logInList;
+    }
+
+    public UserManage(CartDetail cartDetail) {
         scanner = new Scanner(System.in);
         userArrayList = new ArrayList<>();
+        logInList = new ArrayList<String>();
+       this.cartDetail = cartDetail;
     }
 
     public void creatUser() {
         read();
         boolean check = false;
         boolean checkExit = false;
+        int countFail = 0;
         do {
             System.out.println("Enter you user name: ");
             String name = scanner.nextLine();
@@ -43,12 +64,13 @@ int id;
                 }
             else {
                 checkExit = false;
+                countFail++;
+                System.out.println("You have " +(5 - countFail) + " entries left");
                 System.out.println("The username already exists, please enter another username\n");
             }
         }
         while (!check);
     }
-
     public void logIn() {
         read();
         boolean check = false;
@@ -65,12 +87,15 @@ int id;
                         String pass = scanner.nextLine();
                         if (u.getPassWord().equals(pass) && userArrayList.indexOf(checkUserName(name)) == userArrayList.indexOf(checkUserPass(pass))) {
                             System.out.println("Successful login");
-                            id = userArrayList.indexOf(checkUserName(name)) + 1;
+                            cartDetail.setUser(name);
+                            System.out.println(name);
                             check = true;
                         }
-                        countFail++;
-                        System.out.println("You have " + (5 - countFail) + " entries left");
-                        checkFail(countFail);
+                        else {
+                            countFail++;
+                            System.out.println("You have " + (5 - countFail) + " entries left");
+                            checkFail(countFail);
+                        }
                     }
                     while (!check);
                 }
@@ -109,14 +134,7 @@ int id;
         }
         return null;
     }
-    public User findById() {
-        for (User s : userArrayList) {
-            if (s.getIdUser() == id) {
-                return s;
-            }
-        }
-        return null;
-    }
+
     private void read() {
         List<User> usersFile = new ArrayList<>();
         File file = new File("user");

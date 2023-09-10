@@ -17,17 +17,13 @@ public class MenuCustomer {
     private final CartManager cartManager;
     private final IOManager ioManager;
     private final Cart cart;
-private final Product product;
 private final MenuCart menuCart;
-private final CartDetail cartDetail;
-    public MenuCustomer(UserManage userManage, CartManager cartManager, Cart cart, Product product, CartDetail cartDetail) {
+    public MenuCustomer(UserManage userManage, CartManager cartManager, Cart cart) {
         this.userManage = userManage;
-        this.cartDetail = cartDetail;
         this.cart = cart;
         menuCart = new MenuCart();
         this.cartManager = cartManager;
         ioManager = new IOManager();
-        this.product = product;
     }
 
     public void menuCustomer() {
@@ -42,7 +38,7 @@ private final CartDetail cartDetail;
             switch (choice) {
                 case 1:
                         userManage.logIn();
-                    menuCart.menuCart(cartManager, ioManager, cart, product);
+                    menuCart.menuCart(cartManager, ioManager, cart);
                     break;
                 case 2:
                     userManage.creatUser();

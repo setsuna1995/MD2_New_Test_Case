@@ -2,8 +2,6 @@ package controller.functionMenu;
 
 
 import service.functionManage.CategoryManager;
-import service.functionManage.IOManager;
-import service.functionManage.ProductManager;
 import service.tools.ExceptionManager;
 
 public class MenuCategory {

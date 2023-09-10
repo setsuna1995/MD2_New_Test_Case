@@ -29,11 +29,12 @@ public class AdminManage {
                         System.out.println("Successful login");
                         check = true;
                     }
-                    countFail++;
-                    System.out.println("You have " +(5 - countFail) + " entries left");
-                    checkFail(countFail);
+                    else {
+                        countFail++;
+                        System.out.println("You have " +(5 - countFail) + " entries left");
+                        checkFail(countFail);
+                    }
                 }while (!check);
-
             }
             countFail++;
             System.out.println("You have " +(5 - countFail) + " entries left");
