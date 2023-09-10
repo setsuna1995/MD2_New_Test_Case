@@ -1,9 +1,11 @@
-package Tools;
+package service.tools;
+
+
 
 import java.util.Scanner;
 
 public class ExceptionManager {
-    private static final Scanner sc = new Scanner(System.in) ;
+    private static final Scanner sc = new Scanner(System.in);
 
     public static int exceptionQuantity() {
         int quantity = -1;
@@ -22,6 +24,7 @@ public class ExceptionManager {
         } while (quantity == -1);
         return quantity;
     }
+
     public static double exceptionPrice() {
         double price = -1.0;
         do {
@@ -39,26 +42,36 @@ public class ExceptionManager {
         } while (price == -1);
         return price;
     }
-    public static String exceptionDescription() {
-        String description;
-        do {
-            System.out.println("Enter a description for the product (character length from 1 - 30) :");
-            description = sc.nextLine();
-        } while (description.isEmpty() || description.length() > 30);
-        return description;
-    }
+
     public static int exceptionPositiveInteger() {
         int number = -1;
         do {
             try {
                 number = Integer.parseInt(sc.nextLine());
-                if (number < 0) {
-                    System.out.println("Invalid id, re-enter!!!");
+                if (number <= 0) {
+                    number = -1;
+                    System.out.println("Id of the product must be greater than zero, please re-enter!!!");
                 }
             } catch (NumberFormatException e) {
-                System.err.println("Enter the wrong format, re-enter!!!");
+                System.out.println("Wrong format, you need to enter a positive integer, please enter again!");
             }
         } while (number < 0);
         return number;
     }
+    public static int exceptionChoice() {
+        int choice = -1;
+        do {
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+                if (choice < 0) {
+                    choice = -1;
+                    System.err.println("Enter the options available on the screen, please re-enter!!!");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Enter the wrong format, re-enter!!!");
+            }
+        } while (choice == -1);
+        return choice;
+    }
 }
+

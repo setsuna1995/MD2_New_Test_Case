@@ -1,9 +1,9 @@
-package model;
+package model.function;
 
 import java.io.Serializable;
 
 public class Category implements Serializable {
-    private static long serialUID = -1793359086321202973L;
+    private static long serialUID = 123456789;
     private int id;
     private String categoriesName;
 

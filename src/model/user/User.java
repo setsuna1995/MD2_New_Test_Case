@@ -1,16 +1,19 @@
-package model;
+package model.user;
 
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private static long serialUID = 123456789;
+    private static final long serialUID = 123456789;
+    private int INDEX;
     private int idUser;
     private String userName;
     private String passWord;
 
+    public User() {
+    }
 
-    public User(int idUser, String userName, String passWord) {
-        this.idUser = idUser;
+    public User(String userName, String passWord) {
+        this.idUser = ++INDEX;
         this.userName = userName;
         this.passWord = passWord;
     }

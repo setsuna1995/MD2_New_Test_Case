@@ -1,18 +1,16 @@
-package model;
+package model.function;
 
 import java.io.Serializable;
 
 public class Product implements Serializable {
-    private static final long serialUID = -1793359086321202973L;
-    private int idProduct;
+    private static long serialUID = 123456789;
+    private final int idProduct;
     private String productName;
-    private Category category;
+    private final Category category;
     private double productPrice;
 
     private int numberOfProductAvailable;
 
-    public Product() {
-    }
 
     public Product(Category category, int idProduct, String productName, double productPrice, int numberOfProductAvailable) {
 

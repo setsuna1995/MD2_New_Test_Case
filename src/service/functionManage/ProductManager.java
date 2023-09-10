@@ -1,83 +1,84 @@
-package service;
+package service.functionManage;
 
-import Tools.CRUD;
-import Tools.CreatNew;
-import Tools.ExceptionManager;
-import model.Category;
-import model.Product;
+
+import service.tools.CRUD;
+import service.tools.ExceptionManager;
+import model.function.Category;
+import model.function.Product;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Scanner;
 
 
 
 public class ProductManager implements CRUD {
-    private static long serialUID = -9223365651070458532L;
-    private List<Product> productArrayList;
+    private final ArrayList<Product> productArrayList;
     private final Scanner scanner;
-private CategoryManager categoryManager;
-    private  final  ReadAndWriteFile readAndWriteFile;
-    int countFail = 0;
+private final CategoryManager categoryManager;
 
     public ProductManager(CategoryManager categoryManager) {
         productArrayList = new ArrayList<>();
         this.categoryManager = categoryManager;
         scanner = new Scanner(System.in);
-        readAndWriteFile = new ReadAndWriteFile();
     }
-    public List<Product> getProductArrayList() {
+    public ArrayList<Product> getProductArrayList() {
         return productArrayList;
     }
 
-    public void setProductArrayList(List<Product> productArrayList) {
-        this.productArrayList = productArrayList;
+    public void loadProduct(ArrayList<String[]> arrayList) {
+        for (String[] strings : arrayList) {
+            String nameCategory = strings[0];
+            int id = Integer.parseInt(strings[1]);
+            String name = strings[2];
+            double price = Double.parseDouble(strings[3]);
+            int quantity = Integer.parseInt(strings[4]);
+            Category category = categoryManager.findCategoryByName(nameCategory);
+            Product product = new Product(category, id, name, price, quantity);
+            productArrayList.add(product);
+        }
     }
-
     @Override
     public void addData() {
-        if (categoryManager.getCategoryArrayList().isEmpty())
-        {
-            System.out.println("You need creat new category");
-            categoryManager.addData();
-        }
-        System.out.println("Select the category you want to add: ");
-        categoryManager.display();
-        int count = 0;
-
-        int categoriesID = ExceptionManager.exceptionPositiveInteger();
-        for (Category c: categoryManager.getCategoryArrayList()        ) {
-            if (c.getId() == categoriesID) {
-                Category category = categoryManager.findCategoryById(categoriesID);
-                int idProduct = productArrayList.size() + 1;
-                System.out.println("Input product name: ");
-                String name = scanner.nextLine();
-                double price = ExceptionManager.exceptionPrice();
-                int amount = ExceptionManager.exceptionQuantity();
-                Product product = new Product(category, idProduct, name, price, amount);
-                productArrayList.add(product);
-                System.out.println("Add successful");
-                count = -1;
-                readAndWriteFile.writeProductFile(product);
+        int countFail = 0;
+        boolean check = false;
+        do {
+            if (categoryManager.getCategoryArrayList().isEmpty()) {
+                System.out.println("You need creat new category");
+                categoryManager.addData();
             }
-        }
-        if (count == 0) {
-            System.out.println("The ID you entered ís not there, please enter it again");
-            System.out.println("If you enter incorrectly more than 3 times, you will exit");
-            countFail++;
+            System.out.println("Select the category you want to add: ");
+            categoryManager.display();
+            int categoriesID = ExceptionManager.exceptionPositiveInteger();
+            for (Category c1 : categoryManager.getCategoryArrayList()
+            ) {
+                if (categoriesID == c1.getId()) {
+                    Category category = categoryManager.findCategoryById(categoriesID);
+                    int idProduct = productArrayList.size() + 1;
+                    System.out.println("Input product name: ");
+                    String name = scanner.nextLine();
+                    double price = ExceptionManager.exceptionPrice();
+                    int amount = ExceptionManager.exceptionQuantity();
+                    Product product = new Product(category, idProduct, name, price, amount);
+                    productArrayList.add(product);
+                    System.out.println("Add successful");
+                    check = true;
+                } else {
+                    check = false;
+                }
+            }
+            if (!check) {
+                System.out.println("Id not found, re-enter!!!");
+                countFail++;
+            }
             if (countFail == 3) {
-
-                countFail = 0;
-            } else {
-                addData();
+                check = true;
+                System.out.println("If you have entered it incorrectly more than three times, please select again");
             }
-
         }
-
+        while (!check);
     }
-
-
     @Override
     public void edit() {
         display();
@@ -135,7 +136,7 @@ private CategoryManager categoryManager;
     @Override
     public String toString() {
         return "ProductManager{" +
-                "productArrayList=" + productArrayList +
+                 productArrayList +
                 '}';
     }
 

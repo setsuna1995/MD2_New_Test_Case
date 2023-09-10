@@ -1,34 +1,37 @@
-package service;
+package service.functionManage;
 
-import Tools.Add;
-import Tools.CRUD;
-import Tools.ExceptionManager;
-import model.Category;
+
+import service.tools.CRUD;
+import service.tools.ExceptionManager;
+import model.function.Category;
 
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 
 
 public class CategoryManager implements CRUD {
-    private List<Category> categoryArrayList;
+    private final ArrayList<Category> categoryArrayList;
     private final Scanner scanner;
-
     public CategoryManager() {
         categoryArrayList = new ArrayList<>();
         scanner = new Scanner(System.in);
     }
 
-    public List<Category> getCategoryArrayList() {
+    public ArrayList<Category> getCategoryArrayList() {
         return categoryArrayList;
     }
 
-    public void setCategoryArrayList(List<Category> categoryArrayList) {
-        this.categoryArrayList = categoryArrayList;
+    public void loadCategories(ArrayList<String[]> arrayList) {
+        for (String[] strings : arrayList) {
+            int id = Integer.parseInt(strings[0]);
+            String name = strings[1];
+            Category newCategory = new Category(id, name);
+            categoryArrayList.add(newCategory);
+        }
     }
-
     @Override
     public void addData() {
         int id = categoryArrayList.size() + 1;
@@ -62,6 +65,14 @@ public class CategoryManager implements CRUD {
     public Category findCategoryById(int id) {
         for (Category s : categoryArrayList) {
             if (s.getId() == id) {
+                return s;
+            }
+        }
+        return null;
+    }
+    public Category findCategoryByName(String name) {
+        for (Category s : categoryArrayList) {
+            if (Objects.equals(s.getCategoriesName(), name)) {
                 return s;
             }
         }
