@@ -4,13 +4,15 @@ import java.io.Serializable;
 
 public class Product implements Serializable {
     private static long serialUID = 123456789;
-    private final int idProduct;
+    private int idProduct;
     private String productName;
-    private final Category category;
+    private Category category;
     private double productPrice;
 
     private int numberOfProductAvailable;
 
+    public Product() {
+    }
 
     public Product(Category category, int idProduct, String productName, double productPrice, int numberOfProductAvailable) {
 

@@ -41,4 +41,11 @@ public class User implements Serializable {
     public void setPassWord(String passWord) {
         this.passWord = passWord;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                 userName + '\'' +
+                '}';
+    }
 }

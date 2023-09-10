@@ -5,6 +5,7 @@ import model.user.User;
 import service.tools.ExceptionManager;
 import model.function.Cart;
 import model.function.Product;
+import service.userManage.UserManage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,11 +16,14 @@ import java.util.Scanner;
 
 public class CartManager {
     private final ProductManager productManager;
+    private final UserManage userManage;
     private final Scanner scanner;
     private Cart cart;
     private List<Cart> bills;
 
-    public CartManager(ProductManager productManager) {
+
+    public CartManager(ProductManager productManager, UserManage userManage) {
+        this.userManage = userManage;
         scanner = new Scanner(System.in);
         this.productManager = productManager;
         bills = new ArrayList<>();
@@ -34,34 +38,43 @@ public class CartManager {
         System.out.println("Enter id you want to buy: ");
         int id = Integer.parseInt(scanner.nextLine());
         Product product = productManager.findById(id);
+        User user1 = userManage.findById();
         boolean check = false;
 
         if (product != null) {
             System.out.println("Enter quantity you want to buy: ");
             int quantity = Integer.parseInt(scanner.nextLine());
-            checkCartIsEmpty(product, quantity);
-            checkProductExit(product, quantity, check);
+            if (quantity > product.getNumberOfProductAvailable()) {
+                System.out.println(product.getNumberOfProductAvailable());
+                System.out.println("Insufficient number of stores");
+            }
+            else {
+                checkCartIsEmpty(product, quantity, user1);
+                checkProductExit(product, quantity, check, user1);
+            }
+
         }
     }
 
-    public void checkCartIsEmpty(Product product, int quantity) {
+    public void checkCartIsEmpty(Product product, int quantity, User user) {
         if (cart == null) {
             cart = new Cart();
-            CartDetail cartDetail = new CartDetail(product, quantity);
+            CartDetail cartDetail = new CartDetail(product, quantity, user);
             cart.getCartDetails().add(cartDetail);
             cart.setTotal(product.getProductPrice() * quantity);
         }
     }
 
-    public void checkProductExit(Product product, int quantity, boolean check) {
+    public void checkProductExit(Product product, int quantity, boolean check, User user) {
         for (CartDetail cartDetail : cart.getCartDetails()) {
             if (cartDetail.getProduct().getIdProduct() == product.getIdProduct()) {
                 check = true;
-                cartDetail.setQuantity(cartDetail.getQuantity() + quantity);
+                quantity = cartDetail.getQuantity() + quantity;
+                cartDetail.setQuantity(quantity);
             }
         }
         if (!check) {
-            CartDetail cartDetail = new CartDetail(product, quantity);
+            CartDetail cartDetail = new CartDetail(product, quantity, user);
             cart.getCartDetails().add(cartDetail);
         }
         double money = 0;
@@ -124,11 +137,20 @@ public class CartManager {
         if (cart != null) {
             cart.setStatus(true);
             bills.add(cart);
-            write();
-            cart = null;
+            for (Product p: productManager.getProductArrayList()
+                 ) {
+                for (CartDetail c: cart.getCartDetails()
+                     ) {
+                    if (p.getIdProduct() == c.getProduct().getIdProduct()) {
+                        p.setNumberOfProductAvailable(p.getNumberOfProductAvailable() - c.getQuantity());
+                    }
+                }
+            }
         } else {
             System.out.println("Not exist cart!!!");
         }
+        write();
+        cart = null;
     }
 
     public void displayBill() {

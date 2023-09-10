@@ -1,6 +1,7 @@
 package service.userManage;
 
 
+
 import model.user.User;
 
 import java.io.*;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 
 public class UserManage implements Serializable {
     private final Scanner scanner;
-
+int id;
     private List<User> userArrayList;
 
     public UserManage() {
@@ -64,6 +65,7 @@ public class UserManage implements Serializable {
                         String pass = scanner.nextLine();
                         if (u.getPassWord().equals(pass) && userArrayList.indexOf(checkUserName(name)) == userArrayList.indexOf(checkUserPass(pass))) {
                             System.out.println("Successful login");
+                            id = userArrayList.indexOf(checkUserName(name)) + 1;
                             check = true;
                         }
                         countFail++;
@@ -107,7 +109,14 @@ public class UserManage implements Serializable {
         }
         return null;
     }
-
+    public User findById() {
+        for (User s : userArrayList) {
+            if (s.getIdUser() == id) {
+                return s;
+            }
+        }
+        return null;
+    }
     private void read() {
         List<User> usersFile = new ArrayList<>();
         File file = new File("user");

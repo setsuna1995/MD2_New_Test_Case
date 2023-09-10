@@ -1,13 +1,15 @@
 package controller.functionMenu;
 
 import model.function.Cart;
+import model.function.CartDetail;
+import model.function.Product;
 import service.functionManage.CartManager;
 import service.functionManage.IOManager;
 import service.tools.ExceptionManager;
 
 
 public class MenuCart {
-    public void menuCart (CartManager cartManager, IOManager ioManager,  Cart cart) {
+    public void menuCart (CartManager cartManager, IOManager ioManager, Cart cart, Product product) {
         int choice;
         do {
 
@@ -36,9 +38,9 @@ public class MenuCart {
                     break;
                 case 4:
                     cartManager.display();
-                    ioManager.readCart();
                     break;
                 case 5:
+                    ioManager.readCart();
                     cartManager.payment();
                     ioManager.writeCart(cart);
                     break;
